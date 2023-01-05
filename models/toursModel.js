@@ -94,6 +94,13 @@ const tourShema = new mongoose.Schema(
         coordinates: [Number],
         address: String,
         description: String,
+        day: Number,
+      },
+    ],
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
       },
     ],
   },
@@ -109,6 +116,14 @@ tourShema.virtual('durationWeeks').get(function () {
 
 tourShema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+tourShema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
   next();
 });
 
