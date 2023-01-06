@@ -14,6 +14,7 @@ app.use(xss());
 
 const toursRouter = require('./routes/tourRoutes');
 const usersRouter = require('./routes/userRoutes');
+const reviewsRouter = require('./routes/reviewsRoute');
 const AppError = require('./utils/appError');
 const errorController = require('./controllers/errorController');
 
@@ -39,6 +40,8 @@ app.use('/api', limiter);
 
 app.use('/api/v1/tours', toursRouter);
 app.use('/api/v1/users', usersRouter);
+app.use('/api/v1/reviews', reviewsRouter);
+
 //handling unhandled routes
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
