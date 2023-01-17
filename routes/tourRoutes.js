@@ -1,10 +1,15 @@
 const express = require('express');
 const authController = require('../controllers/authController');
+const reviewRoute = require('../routes/reviewsRoute');
 // const app = require('../app');
 
 const tourController = require('../controllers/toursController');
 
 const route = express.Router();
+
+//Nested Routes for review to get tour id and user id
+route.route('/:tourId/reviews', reviewRoute);
+
 // route.param('id', tourController.checkID);
 route
   .route('/top-5-cheap')
