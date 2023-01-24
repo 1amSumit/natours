@@ -2,6 +2,7 @@ const Tour = require('../models/toursModel');
 const APIFeatures = require('../utils/apiFeatures');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const factoryController = require('../controllers/factoryController');
 
 exports.aliasCheapTour = (req, res, next) => {
   req.query.limit = '5';
@@ -42,46 +43,11 @@ exports.getTour = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.createTour = catchAsync(async (req, res, next) => {
-  const newTour = await Tour.create(req.body, {
-    runValidators: true,
-  });
-  res.status(201).json({
-    status: 'success',
-    data: {
-      tour: newTour,
-    },
-  });
-});
+exports.createTour = factoryController.createOne(Tour);
 
-exports.updateTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+exports.updateTour = factoryController.updateOne(Tour);
 
-  if (!tour) {
-    return next(new AppError('No Data found with this id', 404));
-  }
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
-});
-
-exports.deleteTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndDelete(req.params.id);
-
-  if (!tour) {
-    return next(new AppError('No Data found with this id', 404));
-  }
-  res.status(204).json({
-    status: 'success',
-    data: null,
-  });
-});
+exports.deleteTour = factoryController.deleteOne(Tour);
 
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const stat = await Tour.aggregate([
