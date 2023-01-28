@@ -18,6 +18,13 @@ route.patch(
   authController.updatePassword
 );
 
+route.route(
+  '/me',
+  authController.protect,
+  userController.getMe,
+  userController.getUser
+);
+
 route
   .route('/')
   .get(userController.getAllUsers)

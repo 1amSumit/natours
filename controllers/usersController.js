@@ -12,16 +12,7 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-exports.getAllUsers = catchAsync(async (req, res) => {
-  const users = await User.find();
-  res.status(200).json({
-    status: 'success',
-    results: users.length,
-    data: {
-      users,
-    },
-  });
-});
+exports.getAllUsers = factoryController.getAll(User);
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.confirmPassword) {
@@ -49,6 +40,11 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
+
 exports.deleteMe = catchAsync(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(req.user.id, { active: false });
 
@@ -58,17 +54,12 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: 'Error',
-    message: 'Internal Service error',
-  });
-};
+exports.getUser = factoryController.getOne(User);
 
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: 'Error',
-    message: 'Internal Service error',
+    message: 'This route is not defined please use /signup instead',
   });
 };
 
