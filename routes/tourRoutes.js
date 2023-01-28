@@ -17,17 +17,31 @@ route
 
 route.route('/tour-stat').get(tourController.getTourStats);
 
-route.route('/monthly-plan/:year').get(tourController.getMonthlyPlan);
+route
+  .route('/monthly-plan/:year')
+  .get(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    tourController.getMonthlyPlan
+  );
 
 route
   .route('/')
-  .get(authController.protect, tourController.getAllTour)
-  .post(tourController.createTour);
+  .get(tourController.getAllTour)
+  .post(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guid'),
+    tourController.createTour
+  );
 
 route
   .route('/:id')
   .get(tourController.getTour)
-  .patch(tourController.updateTour)
+  .patch(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    tourController.deleteTour
+  )
   .delete(
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
