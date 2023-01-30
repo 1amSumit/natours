@@ -40,7 +40,7 @@ route
   .patch(
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
-    tourController.deleteTour
+    tourController.updateTour
   )
   .delete(
     authController.protect,

@@ -110,6 +110,11 @@ const tourShema = new mongoose.Schema(
   }
 );
 
+//setting index for faster search query
+//1 asscending order sord -1 descending order sort
+tourShema.index({ price: 1, ratingsAverage: 1 });
+tourShema.index({ slug: 1 });
+
 tourShema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });

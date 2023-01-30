@@ -9,22 +9,22 @@ route.post('/login', authController.login);
 
 route.post('/forgot', authController.forgotPassword);
 route.patch('/reset/:token', authController.resetPassword);
-route.patch('/updateMe', authController.protect, userController.updateMe);
-route.delete('/deleteMe', authController.protect, userController.deleteMe);
 
-route.patch(
-  '/updatePassword',
-  authController.protect,
-  authController.updatePassword
-);
+route.use(authController.protect);
+
+route.patch('/updateMe', userController.updateMe);
+route.delete('/deleteMe', userController.deleteMe);
+
+route.patch('/updatePassword', authController.updatePassword);
 
 route.route(
   '/me',
-  authController.protect,
+
   userController.getMe,
   userController.getUser
 );
 
+route.use(authController.restrictTo('admin'));
 route
   .route('/')
   .get(userController.getAllUsers)
