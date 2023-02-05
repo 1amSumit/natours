@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
+const path = require('path');
 
 const app = express();
 
@@ -17,6 +18,12 @@ const usersRouter = require('./routes/userRoutes');
 const reviewsRouter = require('./routes/reviewsRoute');
 const AppError = require('./utils/appError');
 const errorController = require('./controllers/errorController');
+const { join } = require('path');
+
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(express.json({ limit: '10kb' }));
 
@@ -30,14 +37,15 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-app.use(express.static(`${__dirname}/public`));
-
 //Routing
 
 app.use('/api', limiter);
 
 //using as middleware
 
+app.get('/', (req, res) => {
+  res.status(200).render('base');
+});
 app.use('/api/v1/tours', toursRouter);
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/reviews', reviewsRouter);

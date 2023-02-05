@@ -68,8 +68,13 @@ reviewSchema.post('save', function () {
   this.constructor.calcRatingsAverage(this.tour);
 });
 
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
+//We dont have current document asses so we first have to find document and store it then to pass to calcRatingsAverage
+
 reviewSchema.pre(/^findOneAnd/, async function (next) {
   this.r = await this.findone();
+  //We can not use calcRatingsAverage(this.tour) as data is not update yet.
   next();
 });
 
