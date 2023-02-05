@@ -14,6 +14,7 @@ app.use(mongoSanitize());
 app.use(xss());
 
 const toursRouter = require('./routes/tourRoutes');
+const viewRoutes = require('./routes/viewRoutes');
 const usersRouter = require('./routes/userRoutes');
 const reviewsRouter = require('./routes/reviewsRoute');
 const AppError = require('./utils/appError');
@@ -43,9 +44,14 @@ app.use('/api', limiter);
 
 //using as middleware
 
-app.get('/', (req, res) => {
-  res.status(200).render('base');
+app.get('/', viewRoutes);
+
+app.get('/tour', (req, res) => {
+  res.status(200).render('tour', {
+    title: 'The Forest Hicker',
+  });
 });
+
 app.use('/api/v1/tours', toursRouter);
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/reviews', reviewsRouter);
