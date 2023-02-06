@@ -44,13 +44,7 @@ app.use('/api', limiter);
 
 //using as middleware
 
-app.get('/', viewRoutes);
-
-app.get('/tour', (req, res) => {
-  res.status(200).render('tour', {
-    title: 'The Forest Hicker',
-  });
-});
+app.use('/', viewRoutes);
 
 app.use('/api/v1/tours', toursRouter);
 app.use('/api/v1/users', usersRouter);
