@@ -8,7 +8,7 @@ const path = require('path');
 
 const app = express();
 
-app.use(helmet());
+// app.use(helmet());
 
 app.use(mongoSanitize());
 app.use(xss());

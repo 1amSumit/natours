@@ -7,7 +7,7 @@ const reviewSchema = new mongoose.Schema(
       type: String,
       required: [true, 'A review is required'],
     },
-    ratings: {
+    rating: {
       type: Number,
       min: 1,
       max: 5,
@@ -41,7 +41,7 @@ reviewSchema.pre(/^find/, function (next) {
   next();
 });
 
-reviewSchema.static.calcRatingsAverage = async function (tourId) {
+reviewSchema.statics.calcRatingsAverage = async function (tourId) {
   const stat = await this.aggregate([
     {
       $match: { tour: tourId },
