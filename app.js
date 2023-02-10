@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(express.json({ limit: '10kb' }));
+app.use(cookieParser());
 
 const limiter = rateLimit({
   max: 100,

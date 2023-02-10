@@ -64,6 +64,14 @@ exports.login = catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.logOut = (req, res) => {
+  res.cookie('jwt', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  res.status(200).json({ status: 'success' });
+};
+
 exports.protect = catchAsync(async (req, res, next) => {
   //1) Validating Token
   let token;
@@ -72,6 +80,8 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
   }
 
   if (!token) {
@@ -95,6 +105,35 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
   req.user = freshUser;
+  next();
+});
+
+exports.isLogedIn = catchAsync(async (req, res, next) => {
+  //1) Validating Token
+  if (req.cookies.jwt) {
+    //2) VERIFIYNG TOKEN by using inbuilt util called promisify as jwt.verify does not return promise
+    const decoded = await promisify(jwt.verify)(
+      req.cookies.jwt,
+      process.env.JWT_SECRET
+    );
+
+    // 3) Checking user still exists
+    const freshUser = await User.findById(decoded.id);
+
+    if (!freshUser) {
+      return next();
+    }
+
+    // 4 Checking user changed password after getting token
+    if (freshUser.changePasswordAfter(decoded.iat)) {
+      return next();
+    }
+
+    //THERE IS A LOGED IN USER
+    //res.locals is accessible for pug
+    res.locals.user = freshUser;
+    return next();
+  }
   next();
 });
 
