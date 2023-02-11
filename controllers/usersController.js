@@ -2,6 +2,32 @@ const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const factoryController = require('../controllers/factoryController');
+const multer = require('multer');
+
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/img/users');
+  },
+  filename: (req, file, cb) => {
+    const ext = file.mimetype.split('/')[1];
+    cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
+  },
+});
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError('Not an image! please upload only images', 400), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  filename: multerFilter,
+});
+
+exports.uploadPhoto = upload.single('photo');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -15,6 +41,8 @@ const filterObj = (obj, ...allowedFields) => {
 exports.getAllUsers = factoryController.getAll(User);
 
 exports.updateMe = catchAsync(async (req, res, next) => {
+  console.log(req.file);
+  console.log(req.body);
   if (req.body.password || req.body.confirmPassword) {
     return next(
       new AppError(
