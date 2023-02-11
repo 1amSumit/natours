@@ -105,37 +105,42 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
   req.user = freshUser;
+  res.locals.user = freshUser;
   next();
 });
 
-exports.isLogedIn = catchAsync(async (req, res, next) => {
+exports.isLogedIn = async (req, res, next) => {
   //1) Validating Token
-  if (req.cookies.jwt) {
-    //2) VERIFIYNG TOKEN by using inbuilt util called promisify as jwt.verify does not return promise
-    const decoded = await promisify(jwt.verify)(
-      req.cookies.jwt,
-      process.env.JWT_SECRET
-    );
+  try {
+    if (req.cookies.jwt) {
+      //2) VERIFIYNG TOKEN by using inbuilt util called promisify as jwt.verify does not return promise
+      const decoded = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET
+      );
 
-    // 3) Checking user still exists
-    const freshUser = await User.findById(decoded.id);
+      // 3) Checking user still exists
+      const freshUser = await User.findById(decoded.id);
 
-    if (!freshUser) {
+      if (!freshUser) {
+        return next();
+      }
+
+      // 4 Checking user changed password after getting token
+      if (freshUser.changePasswordAfter(decoded.iat)) {
+        return next();
+      }
+
+      //THERE IS A LOGED IN USER
+      //res.locals is accessible for pug
+      res.locals.user = freshUser;
       return next();
     }
-
-    // 4 Checking user changed password after getting token
-    if (freshUser.changePasswordAfter(decoded.iat)) {
-      return next();
-    }
-
-    //THERE IS A LOGED IN USER
-    //res.locals is accessible for pug
-    res.locals.user = freshUser;
+  } catch (err) {
     return next();
   }
   next();
-});
+};
 
 exports.restrictTo =
   (...roles) =>
