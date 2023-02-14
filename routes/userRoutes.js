@@ -13,7 +13,12 @@ route.patch('/reset/:token', authController.resetPassword);
 
 route.use(authController.protect);
 
-route.patch('/updateMe', userController.uploadPhoto, userController.updateMe);
+route.patch(
+  '/updateMe',
+  userController.uploadPhoto,
+  userController.resizeUploadPhoto,
+  userController.updateMe
+);
 route.delete('/deleteMe', userController.deleteMe);
 
 route.patch('/updatePassword', authController.updatePassword);
