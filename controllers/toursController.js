@@ -20,10 +20,39 @@ const upload = multer({
   fileFilter: multerFilter,
 });
 
-exports.uploadMultiTourPhoto = upload.fields([
+exports.uploadTourPhoto = upload.fields([
   { name: 'imageCover', maxCount: 1 },
   { name: 'images', maxCount: 3 },
 ]);
+
+exports.resizeTourPhoto = catchAsync(async (req, res, next) => {
+  if (!req.files.imageCover || !req.files.images) return next();
+
+  req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
+
+  //1 COver images
+  await sharp(req.files.imageCover[0].buffer)
+    .resize(2000, 1333)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/tours/${req.body.imageCover}`);
+
+  //images
+  req.body.images = [];
+  //We are not using assync await right way as it is not stop so we save all promise in array and await all using promis.all using map
+  await Promise.all(
+    req.files.images.map(async (file, i) => {
+      const filename = `tour-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+      await sharp(file.buffer)
+        .resize(2000, 1333)
+        .toFormat('jpeg')
+        .jpeg({ quality: 90 })
+        .toFile(`public/img/tours/${filename}`);
+      req.body.images.push(filename);
+    })
+  );
+  next();
+});
 
 exports.aliasCheapTour = (req, res, next) => {
   req.query.limit = '5';
