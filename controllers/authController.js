@@ -169,14 +169,10 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetURL = `${req.protocol}://${req.get(
     'host'
   )}/api/vi/Users/reset/${resetToken}`;
-
-  const message = `Forgot your password? Submit patch request with new password and confirmPassword to: ${resetURL}.\nIf you did not forget your password please ignore this email!`;
   try {
-    // await sendMail({
-    //   email: user.email,
-    //   subject: 'Password reset , valid for 10 mins',
-    //   message,
-    // });
+    console.log(user);
+    console.log(resetURL);
+    await new Email(user, resetURL).passwordReset();
 
     res.status(200).json({
       status: 'success',

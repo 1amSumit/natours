@@ -6,11 +6,14 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 const app = express();
 
-// app.use(helmet());
+app.enable('trust proxy');
 
+// app.use(helmet());
+app.use(cors());
 app.use(mongoSanitize());
 app.use(xss());
 

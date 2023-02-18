@@ -30,6 +30,11 @@ exports.login = catchAsync(async (req, res, next) => {
     title: 'Log into your account',
   });
 });
+exports.signup = catchAsync(async (req, res, next) => {
+  res.status(200).render('signup', {
+    title: 'sign into your account',
+  });
+});
 
 exports.getMe = catchAsync(async (req, res, next) => {
   res.status(200).render('user', { title: 'Your account' });
