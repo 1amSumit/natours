@@ -46,7 +46,6 @@ exports.signup = catchAsync(async (req, res, next) => {
   });
 
   const url = `{req.protocol}://${req.get('host')}/me`;
-  console.log(fileURLToPath);
 
   await new Email(newUser, url).sendWelcome();
 
@@ -170,8 +169,6 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     'host'
   )}/api/vi/Users/reset/${resetToken}`;
   try {
-    console.log(user);
-    console.log(resetURL);
     await new Email(user, resetURL).passwordReset();
 
     res.status(200).json({

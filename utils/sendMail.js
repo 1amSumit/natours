@@ -7,11 +7,10 @@ module.exports = class Email {
     this.to = user.email;
     this.firstName = user.name.split(' ')[0];
     this.url = url;
-    this.from = `Sumit Kumar jha <${process.env.EMAIL_FROM}>`;
+    this.from = `sumit kumar jha <${process.env.EMAIL_FROM}>`;
   }
   newTransporter() {
     if (process.env.NODE_ENV === 'production') {
-      // Sendgrid
       return nodemailer.createTransport({
         service: 'SendGrid',
         auth: {
@@ -20,7 +19,6 @@ module.exports = class Email {
         },
       });
     }
-
     return nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
       port: process.env.EMAIL_PORT,
@@ -44,15 +42,16 @@ module.exports = class Email {
 
     //Mail options
     const mailOptions = {
-      from: this.from,
       to: this.to,
+      from: this.from,
       subject,
-      html,
       text: htmlToText.convert(html),
+      html,
     };
 
     //send mail using transport
-    await this.newTransporter().sendMail(mailOptions);
+
+    const res = await this.newTransporter().sendMail(mailOptions);
   }
 
   async sendWelcome() {
