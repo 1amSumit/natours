@@ -22,7 +22,6 @@ const usersRouter = require('./routes/userRoutes');
 const reviewsRouter = require('./routes/reviewsRoute');
 const AppError = require('./utils/appError');
 const errorController = require('./controllers/errorController');
-const { join } = require('path');
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));

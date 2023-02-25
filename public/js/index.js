@@ -1,6 +1,6 @@
-import { login, logout } from './login';
 import '@babel/polyfill';
 import { displayMap } from './mapbox';
+import { login, logout } from './login';
 import { updateData } from './updateUser';
 import { signup } from './signup';
 import { bookTour } from './stripe';
@@ -41,6 +41,7 @@ if (DOMel) {
 
 if (logOut) {
   logOut.addEventListener('click', (e) => {
+    console.log('clciiked');
     logout();
   });
 }
