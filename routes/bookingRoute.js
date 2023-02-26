@@ -8,7 +8,7 @@ route.use(authController.protect);
 route.get(
   '/chechkout-session/:tourId',
   authController.protect,
-  bookingController.getChechoutSession
+  bookingController.getCheckoutSession
 );
 
 route.use(authController.restrictTo('admin', 'lead-guid'));
