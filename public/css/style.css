@@ -316,9 +316,6 @@ body {
 }
 
 @media only screen and (max-width: 62.5em) {
-  body {
-    background-color: purple;
-  }
   .header {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
@@ -331,9 +328,6 @@ body {
 }
 
 @media only screen and (max-width: 62.5em) {
-  .card-container {
-    gap: 2rem;
-  }
   .header__logo {
     /* -webkit-box-ordinal-group: 0;
     -ms-flex-order: -1;
