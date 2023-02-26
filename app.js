@@ -41,6 +41,8 @@ app.use(
   })
 );
 
+app.post('/webhook-checkout', express.raw({ type: 'application/json' }));
+
 app.use(compression());
 
 app.set('view engine', 'pug');
@@ -48,18 +50,15 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
   message: 'Too mant requests with this IP, please try again in an hour.',
 });
-
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-}
-
-app.post('/webhook-checkout', express.raw({ type: 'application/json' }));
-
 //Routing
 
 app.use('/api', limiter);
