@@ -46,7 +46,6 @@ exports.uploadPhoto = upload.single('photo');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
-  console.log(obj);
   Object.keys(obj).forEach((el) => {
     if (allowedFields.includes(el)) newObj[el] = obj[el];
   });
@@ -56,8 +55,6 @@ const filterObj = (obj, ...allowedFields) => {
 exports.getAllUsers = factoryController.getAll(User);
 
 exports.updateMe = catchAsync(async (req, res, next) => {
-  console.log(req.file);
-  console.log(req.body);
   if (req.body.password || req.body.confirmPassword) {
     return next(
       new AppError(

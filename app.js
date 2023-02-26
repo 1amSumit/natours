@@ -7,13 +7,10 @@ const xss = require('xss-clean');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const compression = require('compression');
+const hpp = require('hpp');
 
 const app = express();
-
-// app.use(helmet());
-// app.use(cors());
-app.use(mongoSanitize());
-app.use(xss());
 
 const toursRouter = require('./routes/tourRoutes');
 const viewRoutes = require('./routes/viewRoutes');
@@ -22,6 +19,26 @@ const usersRouter = require('./routes/userRoutes');
 const reviewsRouter = require('./routes/reviewsRoute');
 const AppError = require('./utils/appError');
 const errorController = require('./controllers/errorController');
+
+// app.use(helmet());
+// app.use(cors());
+app.use(mongoSanitize());
+app.use(xss());
+
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsQuantity',
+      'ratingsAverage',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ],
+  })
+);
+
+app.use(compression());
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));

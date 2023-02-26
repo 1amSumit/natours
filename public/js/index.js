@@ -41,7 +41,6 @@ if (DOMel) {
 
 if (logOut) {
   logOut.addEventListener('click', (e) => {
-    console.log('clciiked');
     logout();
   });
 }
