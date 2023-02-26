@@ -14,7 +14,7 @@ const tokenGen = function (id) {
   });
 };
 
-const createToken = (user, statusCode, res) => {
+const createToken = (user, statusCode, req, res) => {
   const token = tokenGen(user._id);
 
   const cookieOptions = {
@@ -22,8 +22,9 @@ const createToken = (user, statusCode, res) => {
       Date.now() + process.env.JWT_COOKIES_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
+    secure: req.secure || req.headers('x-forwarded-proto') === 'https',
   };
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
   res.cookie('jwt', token, cookieOptions);
 
   res.status(statusCode).json({
@@ -49,7 +50,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 
   await new Email(newUser, url).sendWelcome();
 
-  createToken(newUser, 201, res);
+  createToken(newUser, 201, req, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -65,7 +66,7 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Invalid email or password'));
   }
 
-  createToken(user, 201, res);
+  createToken(user, 201, req, res);
   next();
 });
 
@@ -207,7 +208,7 @@ exports.resetPassword = async (req, res, next) => {
   try {
     await user.save();
 
-    createToken(user, 200, res);
+    createToken(user, 200, req, res);
   } catch (err) {
     // res.status(500).json({
     //   status: 'fail',
@@ -233,7 +234,7 @@ exports.updatePassword = async (req, res, next) => {
   try {
     await user.save();
 
-    createToken(user, 201, res);
+    createToken(user, 201, req, res);
   } catch (err) {
     return next(new AppError(err.message, 404));
   }

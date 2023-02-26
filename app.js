@@ -25,6 +25,8 @@ const errorController = require('./controllers/errorController');
 app.use(mongoSanitize());
 app.use(xss());
 
+app.enable('trust proxy');
+
 app.use(
   hpp({
     whitelist: [
