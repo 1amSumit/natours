@@ -22,7 +22,7 @@ const bookingController = require('./controllers/bookingController');
 const errorController = require('./controllers/errorController');
 
 // app.use(helmet());
-// app.use(cors());
+app.use(cors());
 app.use(mongoSanitize());
 app.use(xss());
 
@@ -41,9 +41,13 @@ app.use(
   })
 );
 
-app.post('/webhook-checkout', express.raw({ type: 'application/json' }));
-
 app.use(compression());
+
+app.post(
+  '/webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout
+);
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
