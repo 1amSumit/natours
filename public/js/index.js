@@ -4,6 +4,7 @@ import { login, logout } from './login';
 import { updateData } from './updateUser';
 import { signup } from './signup';
 import { bookTour } from './stripe';
+import { showAlert } from './alert';
 
 const loginForm = document.querySelector('.form--login');
 const logOut = document.querySelector('.nav__el--logout');
@@ -80,4 +81,10 @@ if (bookBtn) {
     const { tourId } = e.target.dataset;
     bookTour(tourId);
   });
+}
+
+const alertMessage = document.querySelector('body').dataset.alert;
+
+if (alert) {
+  showAlert('success', alertMessage, 20);
 }
