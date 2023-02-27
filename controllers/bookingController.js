@@ -6,6 +6,7 @@ const catchAsync = require('../utils/catchAsync');
 const factory = require('./factoryController');
 
 exports.getCheckoutSession = catchAsync(async (req, res, next) => {
+  console.log('getcheckoutsession');
   // 1) Get the currently booked tour
   const tour = await Tour.findById(req.params.tourId);
   // console.log(tour);
@@ -45,6 +46,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 });
 
 const createBookingCheckout = async (session) => {
+  console.log('createBookingCheckout');
   const tour = session.client_reference_id;
   const user = (await User.findOne({ email: session.customer_email }))._id;
   const price = session.display_items[0].amount / 100;
@@ -53,6 +55,7 @@ const createBookingCheckout = async (session) => {
 };
 
 exports.webhookCheckout = (req, res, next) => {
+  console.log('webhookCheckout');
   const signature = req.headers['stripe-signature'];
 
   let event;
