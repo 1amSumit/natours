@@ -147,17 +147,18 @@ exports.isLogedIn = async (req, res, next) => {
   next();
 };
 
-exports.restrictTo =
+exports.restrictTo = exports.restrictTo =
   (...roles) =>
-  (res, req, next) => {
-    if (!roles.includes(res.user.role)) {
+  (req, res, next) => {
+    // Corrected parameter order here
+    if (!roles.includes(req.user.role)) {
+      // Corrected req.user.role
       return next(
         new AppError('You do not have permission to perform the action.')
       );
     }
     next();
   };
-
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user) return next(new AppError('No user with this email'));
@@ -167,13 +168,13 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
   const resetURL = `${req.protocol}://${req.get(
     'host'
-  )}/api/vi/Users/reset/${resetToken}`;
+  )}/api/v1/users/reset/${resetToken}`; // Corrected URL path to 'api/v1/users/reset'
   try {
     await new Email(user, resetURL).passwordReset();
 
     res.status(200).json({
       status: 'success',
-      message: 'Token send to email',
+      message: 'Token sent to email',
     });
   } catch (err) {
     user.passwordResetToken = undefined;
@@ -181,7 +182,10 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
 
     return next(
-      new AppError('There was error sending the email.Please try again.', 500)
+      new AppError(
+        'There was an error sending the email. Please try again.',
+        500
+      )
     );
   }
 });

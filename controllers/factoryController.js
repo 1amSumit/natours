@@ -73,7 +73,7 @@ exports.getAll = (Model) =>
       .fieldLimit()
       .pagination();
 
-    const doc = await features.query;
+    const doc = await features.query.exec();
 
     //Send Query
     res.status(200).json({
