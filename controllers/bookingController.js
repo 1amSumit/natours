@@ -20,7 +20,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
       {
         price_data: {
           currency: 'INR',
-          unit_amount: tour.price * 1000,
+          unit_amount: tour.price,
           product_data: {
             name: `${tour.name} Tour`,
             description: tour.summary,
@@ -48,7 +48,17 @@ const createBookingCheckout = async (session) => {
 };
 
 exports.webhookCheckout = (req, res, next) => {
-  const signature = req.headers['stripe-signature'];
+  const payload = {
+    id: 'evt_test_webhook',
+    object: 'event',
+  };
+
+  const payloadString = JSON.stringify(payload, null, 2);
+  const secret = 'whsec_test_secret';
+  const signature = stripe.webhooks.generateTestHeaderString({
+    payload: payloadString,
+    secret,
+  });
 
   let event;
   try {
@@ -57,12 +67,16 @@ exports.webhookCheckout = (req, res, next) => {
       signature,
       process.env.SNIPING_STRIPE_SECRET
     );
+
+    console.log(event);
   } catch (err) {
     return res.status(400).send(`Webhook error: ${err.message}`);
   }
 
   if (event.type === 'checkout.session.completed')
     createBookingCheckout(event.data.object);
+
+  console.log(event.type);
 
   res.status(200).json({ received: true });
 };

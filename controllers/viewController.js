@@ -43,6 +43,7 @@ exports.getMe = catchAsync(async (req, res, next) => {
 
 exports.getBookings = catchAsync(async (req, res, next) => {
   const bookings = await Booking.find({ user: req.user.id });
+  console.log(bookings);
 
   const tourId = bookings.map((el) => el.tour);
   const tours = await Tour.find({ _id: { $in: tourId } });
