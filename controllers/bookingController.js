@@ -48,36 +48,22 @@ const createBookingCheckout = async (session) => {
 };
 
 exports.webhookCheckout = (req, res, next) => {
-  const payload = {
-    id: 'evt_test_webhook',
-    object: 'event',
-  };
-
-  const payloadString = JSON.stringify(payload, null, 2);
-  const secret = 'whsec_test_secret';
-  const signature = stripe.webhooks.generateTestHeaderString({
-    payload: payloadString,
-    secret,
-  });
+  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+  const signature = req.headers['stripe-signature'];
 
   let event;
   try {
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      signature,
-      process.env.SNIPING_STRIPE_SECRET
-    );
-
+    event = stripe.webhooks.constructEvent(req.body, signature, secret);
     console.log(event);
   } catch (err) {
     return res.status(400).send(`Webhook error: ${err.message}`);
   }
 
-  if (event.type === 'checkout.session.completed')
+  if (event.type === 'checkout.session.completed') {
     createBookingCheckout(event.data.object);
+  }
 
   console.log(event.type);
-
   res.status(200).json({ received: true });
 };
 
