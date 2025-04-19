@@ -61,7 +61,7 @@ if (process.env.NODE_ENV === 'development') {
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
-  message: 'Too mant requests with this IP, please try again in an hour.',
+  message: 'Too want requests with this IP, please try again in an hour.',
 });
 //Routing
 
